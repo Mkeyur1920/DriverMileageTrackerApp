@@ -1,0 +1,124 @@
+<!-- <div class="flex justify-center items-center h-screen bg-gray-100">
+    <div class="card flex flex-col gap-6 w-full max-w-2xl p-8 bg-white shadow-xl rounded-lg">
+        <div class="font-semibold text-2xl text-center">Register New Driver</div>
+        <div class="flex flex-col gap-4">
+            <label for="name">Full Name</label>
+            <input pInputText [(ngModel)]="registerModel.name" type="text" placeholder="name mid-name surname" class="p-3 border rounded w-full" />
+            <label for="email">Email</label>
+            <input pInputText [(ngModel)]="registerModel.email" type="email" placeholder="example@example.com" class="p-3 border rounded w-full" />
+
+            <label for="phoneNumber">Phone Number</label>
+            <input pInputNumber [(ngModel)]="registerModel.phoneNumber" type="tel" placeholder="Phone Number" class="p-3 border rounded w-full" />
+
+            <label for="vehicleNumber">Vehicle Number</label>
+            <input pInputText [(ngModel)]="registerModel.vehicleNumber" type="text" placeholder="Vehicle Number" class="p-3 border rounded w-full" />
+
+            <label for="password">Password</label>
+            <input pInputText [(ngModel)]="registerModel.password" type="password" placeholder="Password" class="p-3 border rounded w-full" />
+
+            <label for="repassword">Re enter Password</label>
+            <input pInputText [(ngModel)]="registerModel.repassword" type="password" placeholder="Re-enter Password" class="p-3 border rounded w-full" />
+
+            <p-button type="submit" (onClick)="onRegister()">Register</p-button>
+        </div>
+    </div>
+</div>
+<p-toast> </p-toast> -->
+<div class="animated-bg-wrapper">
+  <div class="ball-container">
+    <div class="ball ball-black"></div>
+    <div class="ball ball-white"></div>
+    <div class="ball ball-black delay-1"></div>
+    <div class="ball ball-white delay-2"></div>
+  </div>
+  <div class="background-animation"></div>
+  <i class="pi pi-car car-icon"></i>
+  <i class="pi pi-truck truck-icon"></i>
+
+  <div class="flex justify-center items-center h-screen relative z-10">
+    <div
+      class="card flex flex-col gap-6 w-full max-w-2xl p-8 bg-white shadow-xl rounded-lg bg-opacity-90"
+    >
+      <div class="font-semibold text-2xl text-center">Register New Driver</div>
+      <div class="flex flex-col gap-4">
+        <label for="name">Full Name</label>
+        <input
+          pInputText
+          [(ngModel)]="registerModel.name"
+          type="text"
+          placeholder="name mid-name surname"
+          class="p-3 border rounded w-full"
+        />
+
+        <label for="email">Email</label>
+        <input
+          pInputText
+          [(ngModel)]="registerModel.email"
+          type="email"
+          placeholder="example@example.com"
+          class="p-3 border rounded w-full"
+        />
+
+        <label for="phoneNumber">Phone Number</label>
+        <input
+          pInputNumber
+          [(ngModel)]="registerModel.phoneNumber"
+          type="tel"
+          placeholder="Phone Number"
+          class="p-3 border rounded w-full"
+        />
+
+        <label for="vehicleNumber">Vehicle Number</label>
+        <input
+          pInputText
+          [(ngModel)]="registerModel.vehicleNumber"
+          type="text"
+          placeholder="Vehicle Number"
+          class="p-3 border rounded w-full"
+        />
+        <label for="password">Select Role</label>
+        <p-dropdown
+          [options]="roles"
+          [(ngModel)]="registerModel.selectedRole"
+          optionLabel="label"
+          placeholder="Select Role"
+          optionValue="value"
+        >
+        </p-dropdown>
+
+        <label for="password">Password</label>
+        <input
+          pInputText
+          [(ngModel)]="registerModel.password"
+          type="password"
+          placeholder="Password"
+          class="p-3 border rounded w-full"
+        />
+
+        <label for="repassword">Re enter Password</label>
+        <input
+          pInputText
+          [(ngModel)]="registerModel.repassword"
+          type="password"
+          placeholder="Re-enter Password"
+          class="p-3 border rounded w-full"
+        />
+
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex flex-wrap gap-2 w-full">
+            <p-button type="submit" (onClick)="onRegister()">Register</p-button>
+          </div>
+          <div class="flex flex-wrap gap-2 w-full">
+            <span
+              (click)="goBackToLogin()"
+              class="font-medium no-underline ml-2 text-right cursor-pointer text-primary"
+              >Bak to Login</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-toast></p-toast>
+</div>

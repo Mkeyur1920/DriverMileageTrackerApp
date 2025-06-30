@@ -1,0 +1,82 @@
+<div class="card">
+  <h2>Mileage Reports</h2>
+
+  <!-- Filters -->
+  <div class="flex gap-3 mb-4">
+    <p-dropdown
+      [options]="users"
+      [(ngModel)]="selectedUserId"
+      placeholder="Select User"
+      optionLabel="name"
+      (onChange)="onChangeUser()"
+      optionValue="id"
+      [style]="{ width: '200px' }"
+    ></p-dropdown>
+
+    <p-dropdown
+      [options]="availableYears"
+      [(ngModel)]="selectedYear"
+      (onChange)="onChangeYear()"
+      placeholder="Select Year"
+      [style]="{ width: '150px' }"
+    ></p-dropdown>
+  </div>
+
+  <!-- Table output -->
+  <div *ngIf="groupedFilteredData.length > 0; else noData">
+    <div *ngFor="let month of groupedFilteredData">
+      <div class="flex justify-between items-center mb-2">
+        <h4>{{ month.key }}</h4>
+        <button
+          pButton
+          type="button"
+          label="Download PDF"
+          icon="pi pi-download"
+          (click)="downloadPDF(month.key)"
+        ></button>
+      </div>
+
+      <p-table
+        [value]="month.value"
+        [responsiveLayout]="'scroll'"
+        [stripedRows]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Start KM</th>
+            <th>End KM</th>
+            <th>Total KM</th>
+            <th>Visited Places</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-i="rowIndex">
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ row.date | date: "dd-MM-yyyy" }}</td>
+            <td>{{ row.startKm }}</td>
+            <td>{{ row.endKm }}</td>
+            <td>{{ row.endKm - row.startKm }}</td>
+            <td>{{ row.placesVisited }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <td colspan="4"><strong>Total</strong></td>
+            <td>
+              <strong>{{ getTotalKm(month.key) }}</strong>
+            </td>
+            <td></td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <hr class="my-4" />
+    </div>
+  </div>
+
+  <ng-template #noData>
+    <p>No records found for the selected user and year.</p>
+  </ng-template>
+</div>

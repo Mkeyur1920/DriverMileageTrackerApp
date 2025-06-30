@@ -1,0 +1,89 @@
+<div class="card">
+  <div class="font-semibold text-xl mb-4">Mileage Records</div>
+
+  <!-- Month/Year Filter -->
+  <div class="flex gap-3 mb-3">
+    <p-calendar
+      [(ngModel)]="selectedMonthYear"
+      view="month"
+      dateFormat="mm/yy"
+      (onSelect)="filterRecords()"
+      [readonlyInput]="true"
+    />
+  </div>
+
+  <!-- Table -->
+  <p-table
+    #dt1
+    [value]="filteredRecords"
+    responsiveLayout="scroll"
+    [globalFilterFields]="[
+      'date',
+      'startKm',
+      'endKm',
+      'totalKm',
+      'placesVisited',
+    ]"
+    [paginator]="true"
+    [rows]="10"
+    [rowHover]="true"
+    [tableStyle]="{ 'min-width': '60rem' }"
+  >
+    <!-- Search Input -->
+    <ng-template #caption>
+      <div class="flex justify-between items-center flex-column sm:flex-row">
+        <p-iconfield iconPosition="left" class="ml-auto">
+          <p-inputicon><i class="pi pi-search"></i></p-inputicon>
+          <input
+            pInputText
+            type="text"
+            (input)="onGlobalFilter(dt1, $event)"
+            placeholder="Search keyword"
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+
+    <!-- Header -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Date</th>
+        <th>Start KM</th>
+        <th>End KM</th>
+        <th>Total KM</th>
+        <th>Visited Places</th>
+      </tr>
+    </ng-template>
+
+    <!-- Body -->
+    <ng-template pTemplate="body" let-rec>
+      <tr [ngClass]="{ 'bg-green-50': rec.id === newestId }">
+        <td>{{ rec.date | date: "mediumDate" }}</td>
+        <td>{{ rec.startKm }}</td>
+        <td>{{ rec.endKm }}</td>
+        <td>{{ rec.totalKm }}</td>
+        <td>{{ rec.placesVisited }}</td>
+      </tr>
+    </ng-template>
+
+    <!-- Footer -->
+    <ng-template pTemplate="footer">
+      <tr>
+        <td colspan="3" class="text-right font-bold">Total KM This Period:</td>
+        <td class="font-bold">{{ getTotalKM() }}</td>
+        <td></td>
+      </tr>
+    </ng-template>
+
+    <!-- Paginator Left -->
+    <ng-template pTemplate="paginatorleft">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-refresh"
+        (click)="refresh()"
+        label="Refresh"
+      ></button>
+    </ng-template>
+  </p-table>
+</div>
