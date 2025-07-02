@@ -18,6 +18,8 @@ import { LoginService } from '../../service/login.service';
 import { MileageRecordDTO } from '../../../dto/mileageRecord.dto';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
+import { MonthlyReportService } from '../../service/monthly-report.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-view-mileage',
@@ -39,6 +41,7 @@ import { CalendarModule } from 'primeng/calendar';
     IconFieldModule,
     DropdownModule,
     CalendarModule,
+    ToastModule,
   ],
   templateUrl: './view-mileage.component.html',
   styleUrl: './view-mileage.component.scss',
@@ -47,6 +50,8 @@ export class ViewMileageComponent {
   records: MileageRecordDTO[] = [];
   filteredRecords: MileageRecordDTO[] = [];
   newestId: number | null = null;
+  showGenerateButton: boolean = false; //default value is false
+  userId: any;
 
   selectedMonthYear: any = null;
 
@@ -68,19 +73,16 @@ export class ViewMileageComponent {
   today: Date = new Date();
   currentYear: number = new Date().getFullYear();
 
-  // yearOptions = [
-  //   { name: '2023', value: 2023 },
-  //   { name: '2024', value: 2024 },
-  //   { name: '2025', value: 2025 },
-  // ];
-
   constructor(
+    private monthlyReportService: MonthlyReportService,
     private mileageService: MileageRecordService,
     private loginService: LoginService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit() {
     this.loadRecords();
+    this.userId = this.loginService.getUser().id;
   }
 
   loadRecords() {
@@ -116,6 +118,11 @@ export class ViewMileageComponent {
         recDate.getFullYear() === selectedYear
       );
     });
+    const uniqueDays = new Set(
+      this.filteredRecords.map((rec) => new Date(rec.date).getDate()),
+    );
+
+    this.showGenerateButton = uniqueDays.size > 0; //change to 25
   }
 
   findNewest() {
@@ -133,5 +140,30 @@ export class ViewMileageComponent {
 
   getTotalKM(): number {
     return this.filteredRecords.reduce((sum, r) => sum + r.totalKm, 0);
+  }
+
+  generateMonthlyReport() {
+    this.userId;
+    const month = this.selectedMonthYear.getMonth() + 1;
+    const year = this.selectedMonthYear.getFullYear();
+
+    this.monthlyReportService
+      .generateMonthlyReport(this.userId, month, year)
+      .subscribe({
+        next: (reportData) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Report status change to ${reportData.status} of ${reportData.month}`,
+          });
+        },
+        error: (err: any) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to generate report.',
+          });
+        },
+      });
   }
 }
