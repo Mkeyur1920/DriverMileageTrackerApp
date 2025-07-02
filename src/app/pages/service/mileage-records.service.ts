@@ -29,19 +29,12 @@ export class MileageRecordService {
       );
   }
 
-  saveMileageRecord(
-    startKm: any,
-    endKm: any,
-    totalKm: any,
-    placesVisited: any,
-    userId: any,
-  ): Observable<boolean> {
+  saveMileageRecord(data: any): Observable<boolean> {
+    console.log(data);
     return this.http
-      .post<MileageRecordDTO>(
-        `${this.API_URL}/save`,
-        { startKm, endKm, totalKm, placesVisited, userId },
-        { observe: 'response' },
-      )
+      .post<MileageRecordDTO>(`${this.API_URL}/save`, data, {
+        observe: 'response',
+      })
       .pipe(
         map((res: HttpResponse<any>) => {
           if (res.status === 200 && res.body?.token) {

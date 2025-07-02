@@ -15,86 +15,103 @@ import { MessageService } from 'primeng/api';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { CommonModule } from '@angular/common';
-
-
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-add-driver-mileage',
-  imports: [InputTextModule,
-    CommonModule,InputIconModule,IconFieldModule, ToastModule ,InputNumberModule,ButtonModule,ImageModule, FluidModule,FileUploadModule, ButtonModule, SelectModule, FormsModule, TextareaModule],
+  imports: [
+    InputTextModule,
+    CommonModule,
+    InputIconModule,
+    IconFieldModule,
+    ToastModule,
+    InputNumberModule,
+    ButtonModule,
+    ImageModule,
+    FluidModule,
+    FileUploadModule,
+    ButtonModule,
+    SelectModule,
+    FormsModule,
+    TextareaModule,
+    CalendarModule,
+  ],
   templateUrl: './add-driver-mileage.component.html',
-  styleUrl: './add-driver-mileage.component.scss'
+  styleUrl: './add-driver-mileage.component.scss',
 })
 export class AddDriverMileageComponent {
-
-
   addMileageModel = {
-    startKm : '',
-    endKm:'',
-    totalKm:'',
-    placesVisited:'',
-    uploadedFiles: [] = []
+    startKm: '',
+    endKm: '',
+    totalKm: '',
+    date: new Date(),
+    placesVisited: '',
+    uploadedFiles: ([] = []),
+  };
 
+  constructor(
+    private mileService: MileageRecordService,
+    private loginService: LoginService,
+    private messageService: MessageService,
+  ) {}
+
+  dropdownItem = null;
+  uploadedFiles: any[] = [];
+
+  onUpload(event: any) {
+    for (const file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    // console.log(this.uploadedFiles)
+    // this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
   }
 
-  constructor(private mileService:MileageRecordService,
-    private loginService: LoginService,
-    private messageService : MessageService
-  ){}
-  dropdownItems = [
-        { name: 'Option 1', code: 'Option 1' },
-        { name: 'Option 2', code: 'Option 2' },
-        { name: 'Option 3', code: 'Option 3' }
-    ];
+  formatDateToYYYYMMDD(date: Date): string {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
 
-    dropdownItem = null;
-    uploadedFiles: any[] = [];
+  onAddMileage() {
+    const payload = {
+      startKm: this.addMileageModel.startKm,
+      endKm: this.addMileageModel.endKm,
+      totalKm: this.addMileageModel.totalKm,
+      placesVisited: this.addMileageModel.placesVisited,
+      date: this.formatDateToYYYYMMDD(this.addMileageModel.date),
+      userId: this.loginService.getUser().id,
+    };
+    // this.uploadedFiles = payload.uploadedFiles;
+    console.log(payload);
 
-    onUpload(event: any) {
-        for (const file of event.files) {
-            this.uploadedFiles.push(file);
+    this.mileService.saveMileageRecord(payload).subscribe({
+      next: (res) => {
+        if (res !== null) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Mileage Record Successfully..!',
+          });
+          this.addMileageModel = {
+            startKm: '',
+            endKm: '',
+            date: new Date(),
+            totalKm: '',
+            placesVisited: '',
+            uploadedFiles: ([] = []),
+          };
         }
-        // console.log(this.uploadedFiles)
-
-        // this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
-    }
-
-    
-
-    
-    
-
-    onAddMileage(){
-      const userId = this.loginService.getUser().id
-      const payload = this.addMileageModel
-      this.uploadedFiles = payload.uploadedFiles
-      this.mileService.saveMileageRecord(
-        this.addMileageModel.startKm,
-        this.addMileageModel.endKm,
-        this.addMileageModel.totalKm,
-        this.addMileageModel.placesVisited,
-        userId
-    ).subscribe(
-        (next)=>{
-          this.messageService.add(
-            { severity: 'success', summary: 'Success', detail: 'Mileage Record Successfully..!' });
-            this.addMileageModel = {
-            startKm : '',
-            endKm : '',
-            totalKm:'',
-            placesVisited:'',
-            uploadedFiles: [] = []
-          }
-
-        },
-        
-        (error)=>{
-          const e = error.error.messages[0]
-          this.messageService.add(
-            { severity: 'error', summary: 'error', detail: e  });
-
-        }
-      )
-    }
-
+      },
+      error: (err) => {
+        const e = err.error.messages[0];
+        this.messageService.add({
+          severity: 'error',
+          summary: 'error',
+          detail: e,
+        });
+      },
+    });
+  }
 }

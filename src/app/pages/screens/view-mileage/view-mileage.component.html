@@ -11,6 +11,14 @@
       [readonlyInput]="true"
     />
   </div>
+  <div class="flex justify-end mb-3" *ngIf="showGenerateButton">
+    <p-button
+      label="Generate Report"
+      icon="pi pi-file"
+      (onClick)="generateMonthlyReport()"
+      class="p-button-success"
+    ></p-button>
+  </div>
 
   <!-- Table -->
   <p-table
@@ -87,3 +95,4 @@
     </ng-template>
   </p-table>
 </div>
+<p-toast></p-toast>

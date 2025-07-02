@@ -32,6 +32,15 @@
           />
         </div>
       </div>
+      <div class="flex flex-wrap gap-2 w-full">
+        <label for="date">Select Date</label>
+        <p-calendar
+          [(ngModel)]="addMileageModel.date"
+          id="date"
+          dateFormat="dd/mm/yy"
+          showIcon="true"
+        ></p-calendar>
+      </div>
 
       <div class="flex flex-wrap">
         <label for="placesVisited">Visited Places</label>
