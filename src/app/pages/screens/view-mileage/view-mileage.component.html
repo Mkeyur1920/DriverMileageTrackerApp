@@ -11,14 +11,6 @@
       [readonlyInput]="true"
     />
   </div>
-  <div class="flex justify-end mb-3" *ngIf="showGenerateButton">
-    <p-button
-      label="Generate Report"
-      icon="pi pi-file"
-      (onClick)="generateMonthlyReport()"
-      class="p-button-success"
-    ></p-button>
-  </div>
 
   <!-- Table -->
   <p-table
@@ -85,13 +77,22 @@
 
     <!-- Paginator Left -->
     <ng-template pTemplate="paginatorleft">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-refresh"
-        (click)="refresh()"
-        label="Refresh"
-      ></button>
+      <div class="flex gap-3 items-center">
+        <button
+          pButton
+          type="button"
+          icon="pi pi-refresh"
+          (click)="refresh()"
+          label="Refresh"
+        ></button>
+
+        <p-button
+          *ngIf="showGenerateButton"
+          label="Generate Report"
+          icon="pi pi-file"
+          (onClick)="generateMonthlyReport()"
+        ></p-button>
+      </div>
     </ng-template>
   </p-table>
 </div>

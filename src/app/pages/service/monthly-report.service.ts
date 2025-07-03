@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MileageRecordDTO } from '../../dto/mileageRecord.dto';
 import { environment } from '../../../environments/environment';
+import { MonthlyReportDTO } from '../../dto/monthlyReport.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -25,5 +26,24 @@ export class MonthlyReportService {
         year: year,
       },
     });
+  }
+
+  getPendingReports(): Observable<MonthlyReportDTO[]> {
+    return this.http.get<MonthlyReportDTO[]>(`${this.API_URL}/pending`);
+  }
+
+  getAllReports(): Observable<MonthlyReportDTO[]> {
+    return this.http.get<MonthlyReportDTO[]>(`${this.API_URL}/all`);
+  }
+
+  updateReportStatus(
+    reportId: number,
+    status: string,
+  ): Observable<MonthlyReportDTO> {
+    return this.http.put<MonthlyReportDTO>(
+      `${this.API_URL}/${reportId}/status`,
+      null,
+      { params: { status } },
+    );
   }
 }
