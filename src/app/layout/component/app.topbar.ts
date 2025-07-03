@@ -10,82 +10,149 @@ import { LoginService } from '../../pages/service/login.service';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-    selector: 'app-topbar',
-    standalone: true,
-    imports: [RouterModule,ButtonModule, ImageModule, CommonModule, StyleClassModule, AppConfigurator],
-    template: ` <div class="layout-topbar">
-                    <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
-                        <i class="pi pi-bars"></i>
-                    </button>
-                    <div class="layout-topbar-logo-container">
-                    
-                            <a class="layout-topbar-logo" routerLink="/">
-                                <p-image class="app-logo" src="assets/fulllogo.jpg"></p-image>
+  selector: 'app-topbar',
+  standalone: true,
+  styleUrls: ['./app-topbar.component.scss'],
+  imports: [
+    RouterModule,
+    ButtonModule,
+    ImageModule,
+    CommonModule,
+    StyleClassModule,
+    AppConfigurator,
+  ],
+  template: `
+    <div class="layout-topbar">
+      <!-- Hamburger / Menu toggle -->
+      <button
+        class="layout-menu-button layout-topbar-action"
+        (click)="layoutService.onMenuToggle()"
+      >
+        <i class="pi pi-bars"></i>
+      </button>
 
-                                <div class="app-name"><span >Driver Mileage Tracker</span></div>
-                            </a>
-                    
-                    </div>
+      <!-- Logo & Title -->
+      <div class="layout-topbar-logo-container flex items-center gap-3">
+        <a
+          class="layout-topbar-logo flex items-center gap-3"
+          routerLink="/dashboard"
+        >
+          <img
+            src="assets/fulllogo.jpg"
+            alt="Driver Mileage Tracker Logo"
+            class="app-logo h-10 w-auto"
+          />
+        </a>
+        <span
+          class="text-xl font-semibold whitespace-nowrap"
+          [ngClass]="{
+            'text-white': layoutService.isDarkTheme(),
+            'text-black': !layoutService.isDarkTheme(),
+          }"
+        >
+          Driver Mileage Tracker
+        </span>
+      </div>
 
-        <div class="layout-topbar-actions">
-            <div class="layout-config-menu">
-                <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
-                    <i [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-                </button>
-                <div class="relative">
-                    <button
-                        class="layout-topbar-action layout-topbar-action-highlight"
-                        pStyleClass="@next"
-                        enterFromClass="hidden"
-                        enterActiveClass="animate-scalein"
-                        leaveToClass="hidden"
-                        leaveActiveClass="animate-fadeout"
-                        [hideOnOutsideClick]="true"
-                    >
-                        <i class="pi pi-palette"></i>
-                    </button>
-                    <app-configurator />
-                </div>
-            </div>
+      <!-- Right Side Actions -->
+      <div class="layout-topbar-actions">
+        <!-- Dark mode & Theme -->
+        <div class="layout-config-menu flex items-center gap-3">
+          <!-- Dark Mode -->
+          <button
+            type="button"
+            class="layout-topbar-action"
+            (click)="toggleDarkMode()"
+          >
+            <i
+              [ngClass]="{
+                pi: true,
+                'pi-moon': layoutService.isDarkTheme(),
+                'pi-sun': !layoutService.isDarkTheme(),
+              }"
+            ></i>
+          </button>
 
-            <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
-                <i class="pi pi-ellipsis-v"></i>
+          <!-- Theme Configurator -->
+          <div class="relative">
+            <button
+              class="layout-topbar-action layout-topbar-action-highlight"
+              pStyleClass="@next"
+              enterFromClass="hidden"
+              enterActiveClass="animate-scalein"
+              leaveToClass="hidden"
+              leaveActiveClass="animate-fadeout"
+              [hideOnOutsideClick]="true"
+            >
+              <i class="pi pi-palette"></i>
+            </button>
+            <app-configurator />
+          </div>
+        </div>
+
+        <!-- Ellipsis button for mobile dropdown -->
+        <button
+          class="layout-topbar-menu-button layout-topbar-action"
+          pStyleClass="@next"
+          enterFromClass="hidden"
+          enterActiveClass="animate-scalein"
+          leaveToClass="hidden"
+          leaveActiveClass="animate-fadeout"
+          [hideOnOutsideClick]="true"
+        >
+          <i class="pi pi-ellipsis-v"></i>
+        </button>
+
+        <!-- Topbar Menu (visible on lg and up) -->
+        <div class="layout-topbar-menu hidden lg:block">
+          <div class="layout-topbar-menu-content">
+            <button type="button" class="layout-topbar-action">
+              <i class="pi pi-calendar"></i>
+              <span>Calendar</span>
             </button>
 
-            <div class="layout-topbar-menu hidden lg:block">
-                <div class="layout-topbar-menu-content">
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-calendar"></i>
-                        <span>Calendar</span>
-                    </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
-                    </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-user"></i>
-                        <span>Profile</span>
-                    </button>
-                    <p-button type="button" (onClick)="onLogout()" class="layout-topbar-action">
-                        <i class="pi pi-sign-out"></i>
-                        <span>Logout</span>
-                    </p-button>
-                </div>
-            </div>
+            <button type="button" class="layout-topbar-action">
+              <i class="pi pi-inbox"></i>
+              <span>Messages</span>
+            </button>
+
+            <button type="button" class="layout-topbar-action">
+              <i class="pi pi-user"></i>
+              <span>Profile</span>
+            </button>
+
+            <!-- Logout button -->
+            <button
+              type="button"
+              class="layout-topbar-action"
+              (click)="onLogout()"
+            >
+              <i class="pi pi-sign-out"></i>
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
-    </div>`
+      </div>
+    </div>
+  `,
 })
 export class AppTopbar {
-    items!: MenuItem[];
+  items!: MenuItem[];
 
-    constructor(private router: Router,public layoutService: LayoutService,private loginService :LoginService) {}
+  constructor(
+    private router: Router,
+    public layoutService: LayoutService,
+    private loginService: LoginService,
+  ) {}
 
-    toggleDarkMode() {
-        this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
-    }
-    onLogout(){
-        this.loginService.logout();
-        this.router.navigate(['/']);
-        
-    }
+  toggleDarkMode() {
+    this.layoutService.layoutConfig.update((state) => ({
+      ...state,
+      darkTheme: !state.darkTheme,
+    }));
+  }
+  onLogout() {
+    this.loginService.logout();
+    this.router.navigate(['/']);
+  }
 }
