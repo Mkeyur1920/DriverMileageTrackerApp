@@ -1,99 +1,173 @@
 <div class="card">
-  <div class="font-semibold text-xl mb-4">Mileage Records</div>
+  <!-- Heading -->
+  <h2 class="font-semibold text-xl mb-5 text-center sm:text-left">
+    Mileage Records
+  </h2>
 
-  <!-- Month/Year Filter -->
-  <div class="flex gap-3 mb-3">
-    <p-calendar
-      [(ngModel)]="selectedMonthYear"
-      view="month"
-      dateFormat="mm/yy"
-      (onSelect)="filterRecords()"
-      [readonlyInput]="true"
-    />
+  <!-- Filters & Search -->
+  <div
+    class="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-4"
+  >
+    <!-- Date Filter -->
+    <div class="w-full sm:w-auto">
+      <label class="block mb-1 font-medium text-sm">Select Month</label>
+      <p-calendar
+        [(ngModel)]="selectedMonthYear"
+        view="month"
+        dateFormat="mm/yy"
+        (onSelect)="filterRecords()"
+        [readonlyInput]="true"
+        styleClass="w-full"
+      ></p-calendar>
+    </div>
+
+    <!-- Search -->
+    <div class="w-full sm:w-72">
+      <label class="block mb-1 font-medium text-sm">Search</label>
+      <p-iconfield iconPosition="left" class="w-full">
+        <p-inputicon><i class="pi pi-search"></i></p-inputicon>
+        <input
+          pInputText
+          type="text"
+          (input)="onGlobalFilter(dt1, $event)"
+          placeholder="Enter keyword"
+          class="w-full"
+        />
+      </p-iconfield>
+    </div>
   </div>
 
-  <!-- Table -->
-  <p-table
-    #dt1
-    [value]="filteredRecords"
-    responsiveLayout="scroll"
-    [globalFilterFields]="[
-      'date',
-      'startKm',
-      'endKm',
-      'totalKm',
-      'placesVisited',
-    ]"
-    [paginator]="true"
-    [rows]="10"
-    [rowHover]="true"
-    [tableStyle]="{ 'min-width': '60rem' }"
-  >
-    <!-- Search Input -->
-    <ng-template #caption>
-      <div class="flex justify-between items-center flex-column sm:flex-row">
-        <p-iconfield iconPosition="left" class="ml-auto">
-          <p-inputicon><i class="pi pi-search"></i></p-inputicon>
-          <input
-            pInputText
-            type="text"
-            (input)="onGlobalFilter(dt1, $event)"
-            placeholder="Search keyword"
-          />
-        </p-iconfield>
-      </div>
-    </ng-template>
+  <!-- Table Container -->
+  <div class="overflow-auto">
+    <p-table
+      #dt1
+      [value]="filteredRecords"
+      responsiveLayout="scroll"
+      [globalFilterFields]="[
+        'date',
+        'startKm',
+        'endKm',
+        'totalKm',
+        'placesVisited',
+      ]"
+      [paginator]="true"
+      [rows]="10"
+      [rowHover]="true"
+      [tableStyle]="{ 'min-width': '56rem' }"
+    >
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Date</th>
+          <th>Start KM</th>
+          <th>End KM</th>
+          <th>Total KM</th>
+          <th>Visited Places</th>
+        </tr>
+      </ng-template>
 
-    <!-- Header -->
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-rec>
+        <tr [ngClass]="{ 'bg-green-50': rec.id === newestId }">
+          <td>{{ rec.date | date: "mediumDate" }}</td>
+          <td>{{ rec.startKm }}</td>
+          <td>{{ rec.endKm }}</td>
+          <td>{{ rec.totalKm }}</td>
+          <td>{{ rec.placesVisited }}</td>
+        </tr>
+      </ng-template>
+
+      <!-- Table Footer -->
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="3" class="text-right font-bold">
+            Total KM This Period:
+          </td>
+          <td class="font-bold">{{ getTotalKM() }}</td>
+          <td></td>
+        </tr>
+      </ng-template>
+
+      <!-- Table Footer Buttons -->
+      <ng-template pTemplate="paginatorleft">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <button
+            pButton
+            type="button"
+            icon="pi pi-refresh"
+            label="Refresh"
+            (click)="refresh()"
+            class="w-full sm:w-auto"
+          ></button>
+
+          <p-button
+            *ngIf="showGenerateButton"
+            label="Generate Report"
+            icon="pi pi-file"
+            (onClick)="generateMonthlyReport()"
+            styleClass="w-full sm:w-auto"
+          ></p-button>
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+<!-- Monthly Report Summary Card -->
+<p-card
+  *ngIf="isReportAvailable"
+  class="mt-5 shadow-md"
+  header="Monthly Reports"
+  subheader="Available reports for the selected driver"
+>
+  <p-table
+    [value]="monthlyReports"
+    [paginator]="true"
+    [rows]="5"
+    [rowHover]="true"
+    responsiveLayout="scroll"
+    class="p-datatable-sm"
+  >
+    <!-- Table Header -->
     <ng-template pTemplate="header">
       <tr>
-        <th>Date</th>
-        <th>Start KM</th>
-        <th>End KM</th>
-        <th>Total KM</th>
-        <th>Visited Places</th>
+        <th>#</th>
+        <th>Month</th>
+        <th>Status</th>
+        <th>Action</th>
       </tr>
     </ng-template>
 
-    <!-- Body -->
-    <ng-template pTemplate="body" let-rec>
-      <tr [ngClass]="{ 'bg-green-50': rec.id === newestId }">
-        <td>{{ rec.date | date: "mediumDate" }}</td>
-        <td>{{ rec.startKm }}</td>
-        <td>{{ rec.endKm }}</td>
-        <td>{{ rec.totalKm }}</td>
-        <td>{{ rec.placesVisited }}</td>
-      </tr>
-    </ng-template>
-
-    <!-- Footer -->
-    <ng-template pTemplate="footer">
+    <!-- Table Body -->
+    <ng-template pTemplate="body" let-report let-i="rowIndex">
       <tr>
-        <td colspan="3" class="text-right font-bold">Total KM This Period:</td>
-        <td class="font-bold">{{ getTotalKM() }}</td>
-        <td></td>
+        <td>{{ i + 1 }}</td>
+        <td>{{ report.month | date: "MMM yyyy" }}</td>
+        <td>
+          <span
+            class="px-2 py-1 rounded text-xs font-semibold"
+            [ngClass]="{
+              'bg-green-100 text-green-800': report.status === 'GENERATED',
+              'bg-yellow-100 text-yellow-800': report.status === 'PENDING',
+              'bg-red-100 text-red-800': report.status === 'REJECTED',
+            }"
+          >
+            {{ report.status }}
+          </span>
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-download"
+            label="Download"
+            [disabled]="
+              report.status === 'PENDING' || report.status === 'REJECTED'
+            "
+            (onClick)="downloadReportByMonth(report.month)"
+            class="p-button-sm"
+          ></p-button>
+        </td>
       </tr>
-    </ng-template>
-
-    <!-- Paginator Left -->
-    <ng-template pTemplate="paginatorleft">
-      <div class="flex gap-3 items-center">
-        <button
-          pButton
-          type="button"
-          icon="pi pi-refresh"
-          (click)="refresh()"
-          label="Refresh"
-        ></button>
-
-        <p-button
-          *ngIf="showGenerateButton"
-          label="Generate Report"
-          icon="pi pi-file"
-          (onClick)="generateMonthlyReport()"
-        ></p-button>
-      </div>
     </ng-template>
   </p-table>
-</div>
+</p-card>
+
 <p-toast></p-toast>
