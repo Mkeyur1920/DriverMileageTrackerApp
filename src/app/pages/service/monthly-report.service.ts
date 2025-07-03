@@ -46,4 +46,10 @@ export class MonthlyReportService {
       { params: { status } },
     );
   }
+
+  doesMonthlyReportExist(userId: string): Observable<MonthlyReportDTO[]> {
+    return this.http.get<MonthlyReportDTO[]>(
+      `${this.API_URL}/exists?userId=${userId}`,
+    );
+  }
 }

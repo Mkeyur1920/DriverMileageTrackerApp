@@ -51,4 +51,13 @@ export class MileageRecordService {
   getAll(): Observable<MileageRecordDTO[]> {
     return this.http.get<MileageRecordDTO[]>(`${this.API_URL}/all`);
   }
+
+  getListOfMileageRecordsByMonthUserId(
+    userId: any,
+    month: any,
+  ): Observable<MileageRecordDTO[]> {
+    return this.http.get<MileageRecordDTO[]>(
+      `${this.API_URL}/get-records-by?userId=${userId}&month=${month}`,
+    );
+  }
 }
