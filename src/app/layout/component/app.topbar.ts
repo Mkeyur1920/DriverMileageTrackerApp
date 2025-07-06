@@ -58,6 +58,8 @@ import { MenuModule } from 'primeng/menu';
 
       <!-- Right Side Actions -->
       <div class="layout-topbar-actions">
+        <p-menu #menu [model]="items" [popup]="true" />
+        <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
         <!-- Dark mode & Theme -->
         <div class="layout-config-menu flex items-center gap-3">
           <!-- Dark Mode -->
@@ -76,7 +78,7 @@ import { MenuModule } from 'primeng/menu';
           </button>
 
           <!-- Theme Configurator -->
-          <div class="relative">
+          <!-- <div class="relative">
             <button
               class="layout-topbar-action layout-topbar-action-highlight"
               pStyleClass="@next"
@@ -89,52 +91,7 @@ import { MenuModule } from 'primeng/menu';
               <i class="pi pi-palette"></i>
             </button>
             <app-configurator />
-          </div>
-        </div>
-
-        <!-- Ellipsis button for mobile dropdown -->
-        <button
-          class="layout-topbar-menu-button layout-topbar-action"
-          pStyleClass="@next"
-          enterFromClass="hidden"
-          enterActiveClass="animate-scalein"
-          leaveToClass="hidden"
-          leaveActiveClass="animate-fadeout"
-          [hideOnOutsideClick]="true"
-        >
-          <i class="pi pi-ellipsis-v"></i>
-        </button>
-
-        <!-- Topbar Menu (visible on lg and up) -->
-        <p-menu #menu [model]="items" [popup]="true" />
-        <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
-        <div class="layout-topbar-menu hidden lg:block">
-          <div class="layout-topbar-menu-content">
-            <!-- <button type="button" class="layout-topbar-action">
-              <i class="pi pi-calendar"></i>
-              <span>Calendar</span>
-            </button>
-
-            <button type="button" class="layout-topbar-action">
-              <i class="pi pi-inbox"></i>
-              <span>Messages</span>
-            </button>
-
-            <button type="button" class="layout-topbar-action">
-              <i class="pi pi-user"></i>
-              <span>Profile</span>
-            </button> -->
-
-            <!-- Logout button -->
-            <!-- <button
-              type="button"
-              class="layout-topbar-action"
-              (click)="onLogout()"
-            >
-              <i class="pi pi-sign-out"></i>
-              <span>Logout</span>
-            </button> -->
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
