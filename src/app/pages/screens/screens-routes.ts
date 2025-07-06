@@ -4,6 +4,7 @@ import { AddDriverMileageComponent } from './add-driver-mileage/add-driver-milea
 import { ViewMileageComponent } from './view-mileage/view-mileage.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportReviewComponent } from './report-review/report-review.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 export default [
   {
@@ -25,6 +26,11 @@ export default [
     path: 'all-monthly-report',
     data: { breadcrumb: 'Button' },
     component: ReportReviewComponent,
+  },
+  {
+    path: 'user-profile/:userId',
+    data: { breadcrumb: 'Button' },
+    component: UserProfileComponent,
   },
 
   { path: '**', redirectTo: '/notfound' },

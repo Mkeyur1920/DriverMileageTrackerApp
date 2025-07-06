@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  padding: 1rem;
+
+  .p-card {
+    max-width: 800px;
+    margin: auto;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+  }
+
+  .col-12 {
+    grid-column: span 12;
+  }
+
+  .md\:col-6 {
+    @media (min-width: 768px) {
+      grid-column: span 6;
+    }
+  }
+}
