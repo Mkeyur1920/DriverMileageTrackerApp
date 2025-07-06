@@ -52,7 +52,7 @@ export class RegisterComponent {
   };
 
   roles = [
-    { label: 'ADMIN', value: 'ADMIN' },
+    // { label: 'ADMIN', value: 'ADMIN' },
     { label: 'DRIVER', value: 'DRIVER' },
   ];
 
@@ -75,7 +75,7 @@ export class RegisterComponent {
         this.msgService.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Registraion Successfully Done 😀! Login',
+          detail: 'Registraion Successfully Done 😀! Now Login 🚀',
         });
       },
       error: (err) => {

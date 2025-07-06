@@ -80,6 +80,27 @@ export class ReportReviewComponent implements OnInit {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
+  markAsReject(reportId: number): void {
+    this.monthlyReportService
+      .updateReportStatus(reportId, 'REJECTED')
+      .subscribe({
+        next: (updated) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Report for ${updated.month} marked as Rejected.`,
+          });
+          this.loadAllReports(); // refresh updated data
+        },
+        error: () =>
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update report status.',
+          }),
+      });
+  }
+
   markAsGenerated(reportId: number): void {
     this.monthlyReportService
       .updateReportStatus(reportId, 'GENERATED')
