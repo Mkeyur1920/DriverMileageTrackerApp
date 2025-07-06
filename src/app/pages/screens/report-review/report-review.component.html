@@ -55,6 +55,7 @@
         <th>Total KM</th>
         <th>Status</th>
         <th>Action</th>
+        <th>Reject</th>
       </tr>
     </ng-template>
 
@@ -71,7 +72,7 @@
             [ngClass]="{
               'bg-yellow-400 text-yellow-800': report.status === 'PENDING',
               'bg-green-400 text-green-800': report.status === 'GENERATED',
-              'bg-gray-400 text-gray-700': report.status === 'SKIPPED',
+              'bg-gray-400 text-gray-700': report.status === 'REJECTED',
             }"
           >
             {{ report.status }}
@@ -79,9 +80,18 @@
         </td>
         <td>
           <p-button
-            label="Mark as Generated"
+            label="Approve"
             icon="pi pi-check"
             (onClick)="markAsGenerated(report.id)"
+            [disabled]="report.status !== 'PENDING'"
+            class="p-button-sm"
+          ></p-button>
+        </td>
+        <td>
+          <p-button
+            label="Reject"
+            icon="pi pi-times-circle"
+            (onClick)="markAsReject(report.id)"
             [disabled]="report.status !== 'PENDING'"
             class="p-button-sm"
           ></p-button>
