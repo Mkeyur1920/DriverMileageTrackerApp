@@ -50,6 +50,7 @@ export class RegisterComponent {
     email: '',
     selectedRole: 'DRIVER',
   };
+  loading: boolean = false;
 
   roles = [
     // { label: 'ADMIN', value: 'ADMIN' },
@@ -69,9 +70,10 @@ export class RegisterComponent {
 
   onRegister() {
     const payload: RegisterDTO = this.registerModel;
-
+    this.loading = true;
     this.authService.register(payload).subscribe({
       next: (res) => {
+        this.loading = false;
         this.msgService.add({
           severity: 'success',
           summary: 'Success',
@@ -79,6 +81,7 @@ export class RegisterComponent {
         });
       },
       error: (err) => {
+        this.loading = false;
         this.msgService.add({
           severity: 'error',
           summary: 'Error',

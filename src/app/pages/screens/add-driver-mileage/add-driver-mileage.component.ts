@@ -48,6 +48,7 @@ export class AddDriverMileageComponent {
     placesVisited: '',
     uploadedFiles: ([] = []),
   };
+  loading: boolean = false;
 
   constructor(
     private mileService: MileageRecordService,
@@ -75,6 +76,7 @@ export class AddDriverMileageComponent {
   }
 
   onAddMileage() {
+    this.loading = true;
     const payload = {
       startKm: this.addMileageModel.startKm,
       endKm: this.addMileageModel.endKm,
@@ -84,10 +86,10 @@ export class AddDriverMileageComponent {
       userId: this.loginService.getUser().id,
     };
     // this.uploadedFiles = payload.uploadedFiles;
-    console.log(payload);
 
     this.mileService.saveMileageRecord(payload).subscribe({
       next: (res) => {
+        this.loading = false;
         if (res !== null) {
           this.messageService.add({
             severity: 'success',
@@ -105,6 +107,7 @@ export class AddDriverMileageComponent {
         }
       },
       error: (err) => {
+        this.loading = false;
         const e = err.error.messages[0];
         this.messageService.add({
           severity: 'error',
