@@ -168,6 +168,9 @@ export class AdminDashboard implements OnInit {
             this.generatedReports,
             this.rejectedReports,
           ];
+          console.log( this.pendingReports,
+            this.generatedReports,
+            this.rejectedReports)
         },
       });
     });
