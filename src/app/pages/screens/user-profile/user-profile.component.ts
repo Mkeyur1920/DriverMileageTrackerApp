@@ -33,6 +33,7 @@ export class UserProfileComponent implements OnInit {
   signaturePreview: string | ArrayBuffer | null = null;
   photoPreview: string | ArrayBuffer | null = null;
   userId: string = '';
+  loading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -79,6 +80,7 @@ export class UserProfileComponent implements OnInit {
     // Load existing user info from API here (you can patch the form)
   }
   onSubmit() {
+    this.loading = true;
     if (this.profileForm.invalid) {
       this.messageService.add({
         severity: 'warn',
@@ -110,6 +112,7 @@ export class UserProfileComponent implements OnInit {
 
     this.userService.update(this.userId, formData).subscribe({
       next: (res) => {
+        this.loading = false;
         if (res) {
           this.messageService.add({
             severity: 'success',
@@ -119,6 +122,7 @@ export class UserProfileComponent implements OnInit {
         }
       },
       error: (err) => {
+        this.loading = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Profile Not Updated',

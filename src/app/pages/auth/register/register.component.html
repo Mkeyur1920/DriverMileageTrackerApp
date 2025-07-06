@@ -106,7 +106,13 @@
 
         <div class="flex flex-col md:flex-row gap-4">
           <div class="flex flex-wrap gap-2 w-full">
-            <p-button type="submit" (onClick)="onRegister()">Register</p-button>
+            <p-button
+              type="submit"
+              [loading]="loading"
+              [disabled]="loading"
+              (onClick)="onRegister()"
+              >Register</p-button
+            >
           </div>
           <div class="flex flex-wrap gap-2 w-full">
             <span

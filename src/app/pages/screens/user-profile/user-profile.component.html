@@ -73,7 +73,13 @@
 
     <!-- Submit Button -->
     <div class="col-12 mt-4">
-      <p-button type="submit" label="Update Profile" class="w-full"></p-button>
+      <p-button
+        type="submit"
+        [loading]="loading"
+        [disabled]="loading"
+        label="Update Profile"
+        class="w-full"
+      ></p-button>
     </div>
   </form>
 </p-card>
