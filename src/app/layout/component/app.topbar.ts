@@ -8,6 +8,7 @@ import { LayoutService } from '../service/layout.service';
 import { ImageModule } from 'primeng/image';
 import { LoginService } from '../../pages/service/login.service';
 import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
 
 @Component({
   selector: 'app-topbar',
@@ -20,6 +21,7 @@ import { ButtonModule } from 'primeng/button';
     CommonModule,
     StyleClassModule,
     AppConfigurator,
+    MenuModule,
   ],
   template: `
     <div class="layout-topbar">
@@ -104,9 +106,11 @@ import { ButtonModule } from 'primeng/button';
         </button>
 
         <!-- Topbar Menu (visible on lg and up) -->
+        <p-menu #menu [model]="items" [popup]="true" />
+        <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
         <div class="layout-topbar-menu hidden lg:block">
           <div class="layout-topbar-menu-content">
-            <button type="button" class="layout-topbar-action">
+            <!-- <button type="button" class="layout-topbar-action">
               <i class="pi pi-calendar"></i>
               <span>Calendar</span>
             </button>
@@ -119,17 +123,17 @@ import { ButtonModule } from 'primeng/button';
             <button type="button" class="layout-topbar-action">
               <i class="pi pi-user"></i>
               <span>Profile</span>
-            </button>
+            </button> -->
 
             <!-- Logout button -->
-            <button
+            <!-- <button
               type="button"
               class="layout-topbar-action"
               (click)="onLogout()"
             >
               <i class="pi pi-sign-out"></i>
               <span>Logout</span>
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
@@ -137,7 +141,7 @@ import { ButtonModule } from 'primeng/button';
   `,
 })
 export class AppTopbar {
-  items!: MenuItem[];
+  items: MenuItem[] | undefined;
 
   constructor(
     private router: Router,
@@ -145,14 +149,42 @@ export class AppTopbar {
     private loginService: LoginService,
   ) {}
 
+  ngOnInit() {
+    this.items = [
+      {
+        label: 'Options',
+        items: [
+          {
+            label: 'Messages',
+            icon: 'pi pi-inbox',
+          },
+          {
+            label: 'Profile',
+            icon: 'pi pi-user',
+            command: () => this.userProfile(),
+          },
+          {
+            label: 'Log-out',
+            icon: 'pi pi-sign-out',
+            command: () => this.onLogout(), // ✅ fix here
+          },
+        ],
+      },
+    ];
+  }
+
   toggleDarkMode() {
     this.layoutService.layoutConfig.update((state) => ({
       ...state,
       darkTheme: !state.darkTheme,
     }));
   }
-  onLogout() {
+  onLogout = () => {
     this.loginService.logout();
     this.router.navigate(['/']);
-  }
+  };
+  userProfile = () => {
+    const userId = this.loginService.getUser().id;
+    this.router.navigate([`/screens/user-profile/${userId}`]);
+  };
 }

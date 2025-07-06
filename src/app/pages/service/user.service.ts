@@ -21,7 +21,11 @@ export class UserService {
     return this.http.get<any>(`${this.API_URL}/all`);
   }
 
-  getById(id: number): Observable<any> {
+  getById(id: any): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/${id}`);
+  }
+
+  update(userId: string, formData: FormData): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/update/${userId}`, formData);
   }
 }
