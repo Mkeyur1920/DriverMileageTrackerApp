@@ -1,5 +1,5 @@
 export interface NotificationDto {
-  id?: number;
+  id: number;
   title: string;
   message: string;
   status: 'UNREAD' | 'READ';

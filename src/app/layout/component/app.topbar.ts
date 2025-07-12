@@ -141,7 +141,7 @@ export class AppTopbar {
     private router: Router,
     public layoutService: LayoutService,
     private loginService: LoginService,
-    private notificationService: NotificationService, // ✅ Inject NotificationService
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit() {
@@ -189,6 +189,8 @@ export class AppTopbar {
   }
 
   markAsRead(notification: NotificationDto): void {
+    console.log(notification);
+
     if (notification.status === 'UNREAD') {
       this.notificationService.markAsRead(notification.id!).subscribe(() => {
         notification.status = 'READ';
