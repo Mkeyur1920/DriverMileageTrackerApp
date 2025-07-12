@@ -9,12 +9,16 @@ import { ImageModule } from 'primeng/image';
 import { LoginService } from '../../pages/service/login.service';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
+import { NotificationService } from '../../pages/service/notification.service';
+import { DialogModule } from 'primeng/dialog';
+import { NotificationDto } from '../../dto/notification.dto';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
   styleUrls: ['./app-topbar.component.scss'],
   imports: [
+    CommonModule,
     RouterModule,
     ButtonModule,
     ImageModule,
@@ -22,6 +26,7 @@ import { MenuModule } from 'primeng/menu';
     StyleClassModule,
     AppConfigurator,
     MenuModule,
+    DialogModule,
   ],
   template: `
     <div class="layout-topbar">
@@ -78,7 +83,7 @@ import { MenuModule } from 'primeng/menu';
           </button>
 
           <!-- Theme Configurator -->
-          <!-- <div class="relative">
+          <div class="relative">
             <button
               class="layout-topbar-action layout-topbar-action-highlight"
               pStyleClass="@next"
@@ -91,22 +96,64 @@ import { MenuModule } from 'primeng/menu';
               <i class="pi pi-palette"></i>
             </button>
             <app-configurator />
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
+    <p-dialog
+      header="Your Notifications"
+      [(visible)]="showNotificationsDialog"
+      [modal]="true"
+      [style]="{ width: '30vw' }"
+      [breakpoints]="{ '960px': '80vw', '640px': '95vw' }"
+      [closable]="true"
+    >
+      <div *ngIf="notifications.length; else noNotif">
+        <ul class="list-none p-0 m-0 max-h-80 overflow-y-auto">
+          <li
+            *ngFor="let n of notifications"
+            class="border-b p-3 cursor-pointer"
+            [ngClass]="{ 'font-bold text-primary': n.status === 'UNREAD' }"
+            (click)="markAsRead(n)"
+          >
+            <div class="text-sm">{{ n.title }}</div>
+            <small class="text-gray-500">{{ n.message }}</small>
+            <div class="text-xs text-gray-400 mt-1">
+              {{ n.createdAt | date: 'short' }}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <ng-template #noNotif>
+        <p>No notifications available.</p>
+      </ng-template>
+    </p-dialog>
   `,
 })
 export class AppTopbar {
   items: MenuItem[] | undefined;
+  notifications: NotificationDto[] = [];
+  showNotificationsDialog = false;
+
+  unreadCount: number = 0;
 
   constructor(
     private router: Router,
     public layoutService: LayoutService,
     private loginService: LoginService,
+    private notificationService: NotificationService, // ✅ Inject NotificationService
   ) {}
 
   ngOnInit() {
+    this.updateMenuItems();
+    const userId = this.loginService.getUser().id;
+    this.notificationService.getUserNotifications(userId).subscribe((data) => {
+      this.notifications = data;
+      this.unreadCount = data.filter((n) => n.status === 'UNREAD').length;
+      this.updateMenuItems();
+    });
+  }
+  updateMenuItems() {
     this.items = [
       {
         label: 'Options',
@@ -114,6 +161,8 @@ export class AppTopbar {
           {
             label: 'Messages',
             icon: 'pi pi-inbox',
+            badge: this.unreadCount > 0 ? String(this.unreadCount) : '',
+            command: () => this.openNotifications(),
           },
           {
             label: 'Profile',
@@ -123,11 +172,28 @@ export class AppTopbar {
           {
             label: 'Log-out',
             icon: 'pi pi-sign-out',
-            command: () => this.onLogout(), // ✅ fix here
+            command: () => this.onLogout(),
           },
         ],
       },
     ];
+  }
+
+  openNotifications(): void {
+    const userId = this.loginService.getUser().id;
+    this.notificationService.getUserNotifications(userId).subscribe((data) => {
+      this.notifications = data;
+      this.unreadCount = data.filter((n) => n.status === 'UNREAD').length;
+      this.showNotificationsDialog = true;
+    });
+  }
+
+  markAsRead(notification: NotificationDto): void {
+    if (notification.status === 'UNREAD') {
+      this.notificationService.markAsRead(notification.id!).subscribe(() => {
+        notification.status = 'READ';
+      });
+    }
   }
 
   toggleDarkMode() {
@@ -136,10 +202,12 @@ export class AppTopbar {
       darkTheme: !state.darkTheme,
     }));
   }
+
   onLogout = () => {
     this.loginService.logout();
     this.router.navigate(['/']);
   };
+
   userProfile = () => {
     const userId = this.loginService.getUser().id;
     this.router.navigate([`/screens/user-profile/${userId}`]);

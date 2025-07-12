@@ -100,5 +100,60 @@
     </ng-template>
   </p-table>
 </div>
+<!-- Confirmation Dialog -->
+<p-dialog
+  header="{{ isRejecting ? 'Reject Report' : 'Approve Report' }}"
+  [(visible)]="confirmationVisible"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '400px' }"
+>
+  <div class="mb-3">
+    <p *ngIf="!isRejecting">
+      Are you sure you want to <strong>approve</strong> the report for
+      <strong>{{ selectedReport?.month }}</strong> submitted by
+      <strong>{{ selectedReport?.user?.name }}</strong>
+      (Vehicle:
+      <strong>{{ selectedReport?.user?.vehicleNumber }}</strong
+      >)?
+    </p>
+
+    <div *ngIf="isRejecting">
+      <p class="mb-2">
+        Are you sure you want to <strong>reject</strong> the report for
+        <strong>{{ selectedReport?.month }}</strong> submitted by
+        <strong>{{ selectedReport?.user?.name }}</strong>
+        (Vehicle:
+        <strong>{{ selectedReport?.user?.vehicleNumber }}</strong
+        >)?
+      </p>
+      <label for="remark" class="block mb-1 font-medium"
+        >Rejection Reason:</label
+      >
+      <textarea
+        id="remark"
+        rows="3"
+        [(ngModel)]="rejectionRemark"
+        class="w-full p-inputtext"
+        pInputTextarea
+        required
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      (onClick)="cancelAction()"
+    ></p-button>
+    <p-button
+      label="Confirm"
+      icon="pi pi-check"
+      (onClick)="confirmAction()"
+      [disabled]="isRejecting && !rejectionRemark.trim()"
+    ></p-button>
+  </div>
+</p-dialog>
 
 <p-toast></p-toast>

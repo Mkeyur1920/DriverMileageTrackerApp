@@ -119,7 +119,6 @@ export class AdminDashboard implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Initialize empty chart data early
     this.submissionPieData = {
       labels: ['Pending', 'Generated', 'Rejected'],
       datasets: [
@@ -129,6 +128,7 @@ export class AdminDashboard implements OnInit {
         },
       ],
     };
+
     this.userService.getAll().subscribe((users) => {
       this.totalDrivers = users.filter((u: any) =>
         u.roles.some((r: any) => r.roleName !== 'ADMIN'),
@@ -146,10 +146,9 @@ export class AdminDashboard implements OnInit {
 
       this.totalKm = records.reduce((sum, r) => sum + (r.endKm - r.startKm), 0);
 
-      // 📊 Generate charts with this data
       this.getChartsDetails();
 
-      // Monthly report stats
+      // ✅ Update pie chart after fetching report stats
       this.monthlyReportService.getAllReports().subscribe({
         next: (res) => {
           this.pendingReports = res.filter(
@@ -162,12 +161,19 @@ export class AdminDashboard implements OnInit {
             (r) => r.status === 'REJECTED',
           ).length;
 
-          // Update pie chart dynamically with correct values
-          this.submissionPieData.datasets[0].data = [
-            this.pendingReports,
-            this.generatedReports,
-            this.rejectedReports,
-          ];
+          this.submissionPieData = {
+            labels: ['Pending', 'Generated', 'Rejected'],
+            datasets: [
+              {
+                data: [
+                  this.pendingReports,
+                  this.generatedReports,
+                  this.rejectedReports,
+                ],
+                backgroundColor: ['#f39c12', '#27ae60', '#e74c3c'],
+              },
+            ],
+          };
         },
       });
     });
