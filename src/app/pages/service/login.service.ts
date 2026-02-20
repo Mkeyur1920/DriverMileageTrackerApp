@@ -5,9 +5,36 @@ import { map } from 'rxjs/operators';
 import { RegisterDTO } from '../../dto/register.dto';
 import { environment } from '../../../environments/environment';
 
-interface LoginResponse {
+interface UserRole {
+  id?: number;
+  roleName?: string;
+}
+
+interface UserProfile {
+  id: number;
+  name: string;
+  phoneNumber: string;
+  vehicleNumber: string;
+  roles: UserRole[];
+  signature?: string | null;
+  userPhoto?: string | null;
+}
+
+interface FlatLoginResponse extends UserProfile {
   token: string;
-  user: any;
+  password?: string;
+}
+
+interface WrappedLoginResponse {
+  token: string;
+  user: UserProfile;
+}
+
+type LoginResponse = FlatLoginResponse | WrappedLoginResponse;
+
+interface NormalizedLoginPayload {
+  token: string;
+  user: UserProfile;
 }
 
 @Injectable({
@@ -31,11 +58,15 @@ export class LoginService {
       )
       .pipe(
         map((res: HttpResponse<LoginResponse>) => {
-          if (res.status === 200 && res.body?.token) {
-            localStorage.setItem('authToken', res.body.token);
-            localStorage.setItem('user', JSON.stringify(res.body));
+          const payload = this.normalizeLoginPayload(res.body);
+
+          if (res.status === 200 && payload?.token) {
+            localStorage.setItem('authToken', payload.token);
+            localStorage.setItem('user', JSON.stringify(payload.user));
             return true;
           }
+
+          this.logout();
           return false;
         }),
       );
@@ -68,6 +99,60 @@ export class LoginService {
 
   public getUser(): any {
     const u = localStorage.getItem('user');
-    return u ? JSON.parse(u) : null;
+    if (!u) {
+      return null;
+    }
+
+    const parsedUser = JSON.parse(u);
+    return parsedUser?.user ? parsedUser.user : parsedUser;
+  }
+
+  public getRoles(): string[] {
+    const user = this.getUser();
+    if (!user?.roles || !Array.isArray(user.roles)) {
+      return [];
+    }
+
+    return user.roles
+      .map((role: any) =>
+        typeof role === 'string' ? role : role?.roleName,
+      )
+      .filter(Boolean);
+  }
+
+  public hasRole(role: string): boolean {
+    return this.getRoles().includes(role);
+  }
+
+  private normalizeLoginPayload(
+    body: LoginResponse | null,
+  ): NormalizedLoginPayload | null {
+    if (!body || !('token' in body) || !body.token) {
+      return null;
+    }
+
+    if ('user' in body && body.user) {
+      return {
+        token: body.token,
+        user: this.sanitizeUser(body.user),
+      };
+    }
+
+    return {
+      token: body.token,
+      user: this.sanitizeUser(body as FlatLoginResponse),
+    };
+  }
+
+  private sanitizeUser(rawUser: any): UserProfile {
+    return {
+      id: rawUser?.id,
+      name: rawUser?.name ?? '',
+      phoneNumber: rawUser?.phoneNumber ?? '',
+      vehicleNumber: rawUser?.vehicleNumber ?? '',
+      roles: Array.isArray(rawUser?.roles) ? rawUser.roles : [],
+      signature: rawUser?.signature ?? null,
+      userPhoto: rawUser?.userPhoto ?? null,
+    };
   }
 }
