@@ -31,12 +31,9 @@ export class AppMenu {
   constructor(private authService: LoginService) {}
   ngOnInit() {
     const user = this.authService.getUser();
+    this.userId = user?.id;
 
-    this.userId = user.id;
-
-    if (user.roles.some((role: any) => role.roleName === 'ADMIN')) {
-      this.isAdminRole = true;
-    }
+    this.isAdminRole = this.authService.hasRole('ADMIN');
 
     this.model = [
       {

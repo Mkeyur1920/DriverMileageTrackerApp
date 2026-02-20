@@ -1,35 +1,40 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { AddDriverMileageComponent } from './add-driver-mileage/add-driver-mileage.component';
 import { ViewMileageComponent } from './view-mileage/view-mileage.component';
 import { ReportsComponent } from './reports/reports.component';
 import { ReportReviewComponent } from './report-review/report-review.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { roleGuard } from '../../core/guards/role.guard';
 
 export default [
   {
     path: 'add-mileage',
-    data: { breadcrumb: 'Button' },
+    canActivate: [roleGuard],
+    data: { breadcrumb: 'Button', roles: ['DRIVER'] },
     component: AddDriverMileageComponent,
   },
   {
     path: 'view-mileage',
-    data: { breadcrumb: 'Button' },
+    canActivate: [roleGuard],
+    data: { breadcrumb: 'Button', roles: ['DRIVER'] },
     component: ViewMileageComponent,
   },
   {
     path: 'reports',
-    data: { breadcrumb: 'Button' },
+    canActivate: [roleGuard],
+    data: { breadcrumb: 'Button', roles: ['ADMIN'] },
     component: ReportsComponent,
   },
   {
     path: 'all-monthly-report',
-    data: { breadcrumb: 'Button' },
+    canActivate: [roleGuard],
+    data: { breadcrumb: 'Button', roles: ['ADMIN'] },
     component: ReportReviewComponent,
   },
   {
     path: 'user-profile/:userId',
-    data: { breadcrumb: 'Button' },
+    canActivate: [roleGuard],
+    data: { breadcrumb: 'Button', roles: ['ADMIN', 'DRIVER'] },
     component: UserProfileComponent,
   },
 
