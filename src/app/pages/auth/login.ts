@@ -157,12 +157,21 @@ export class Login {
           this.messageService.add({
             severity: 'warn',
             summary: 'Login Failed',
-            detail: 'Invalid credentials.',
+            detail: 'Login response format mismatch.',
           });
         }
       },
       error: (e) => {
         this.loading = false;
+        if (e?.status === 401) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Login Failed',
+            detail: 'Invalid credentials.',
+          });
+          return;
+        }
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error',

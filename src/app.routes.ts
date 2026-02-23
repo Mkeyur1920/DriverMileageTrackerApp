@@ -5,25 +5,31 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { Access } from './app/pages/auth/access';
 import { Documentation } from './app/pages/documentation/documentation';
+import { authChildGuard, authGuard } from './app/core/guards/auth.guard';
 
 export const appRoutes: Routes = [
-    {
+  {
     path: '',
     redirectTo: 'auth/login',
-    pathMatch: 'full' 
+    pathMatch: 'full',
   },
-    {
+  {
     path: '',
     component: AppLayout,
+    canActivate: [authGuard],
+    canActivateChild: [authChildGuard],
     children: [
-        { path: 'dashboard', component: Dashboard },
-        { path: 'screens', loadChildren: () => import('./app/pages/screens/screens-routes') },
-        { path: 'documentation', component: Documentation },
-        { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') }
-    ]
-    },
-    { path: 'landing', component: Landing },
-    { path: 'notfound', component: Notfound },
-    { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
-    { path: '**', redirectTo: '/notfound' }
+      { path: 'dashboard', component: Dashboard },
+      {
+        path: 'screens',
+        loadChildren: () => import('./app/pages/screens/screens-routes'),
+      },
+      { path: 'documentation', component: Documentation },
+      { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
+    ],
+  },
+  { path: 'landing', component: Landing },
+  { path: 'notfound', component: Notfound },
+  { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
+  { path: '**', redirectTo: '/notfound' },
 ];

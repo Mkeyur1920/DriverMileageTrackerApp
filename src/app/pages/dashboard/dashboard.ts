@@ -38,11 +38,6 @@ export class Dashboard implements OnInit {
   isAdmin: boolean = false;
 
   ngOnInit(): void {
-    const user = this.authService.getUser();
-    if (user.roles.some((role: any) => role.roleName === 'ADMIN')) {
-      this.isAdmin = true;
-    } else {
-      this.isAdmin = false;
-    }
+    this.isAdmin = this.authService.hasRole('ADMIN');
   }
 }
